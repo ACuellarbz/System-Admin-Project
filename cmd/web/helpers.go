@@ -10,53 +10,64 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// Defining global envelope
-type envelope map[string]interface {
-}
+// Defining global type
+type envelope map[string]interface{}
 
-// Source string
+// Constant string containing characters for generating random strings
 const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+_#$-!~"
 
-
+// Generates a JSON response
 func (myApp *App) createJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
-	//the actual conversion
+	// Convert the data to a JSON-formatted string
 	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
 	}
 
 	js = append(js, '\n')
+
+	// Set the provided headers in the response.
 	for key, value := range headers {
 		w.Header()[key] = value
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+
 	w.WriteHeader(status)
 	w.Write(js)
+
 	return nil
 }
 
+// Reads the "seed" parameter from the request and converts it to an int64.
 func (myApp *App) readUserInput(r *http.Request) (int64, error) {
 	params := httprouter.ParamsFromContext(r.Context())
 
-	user_input, err := strconv.ParseInt(params.ByName("seed"), 10, 64)
+	// Retrieve the "seed" parameter from the request.
+	userInput, err := strconv.ParseInt(params.ByName("seed"), 10, 64)
 	if err != nil {
 		return 0, errors.New("invalid seed, please ensure that the seed is a base64 int")
 	}
-	return user_input, nil
+
+	return userInput, nil
 }
 
+// Generates a random string of the specified length.
 func (myApp *App) generateRandomString(length int) string {
-	slice := make([]rune, length) //creates a slice of type run wuth a length of 'length'
-	r := []rune(randomStringSource)//creates a slice of runs from randomStringSource
+	// Create a slice of runes with the specified length.
+	slice := make([]rune, length)
 
+	// Convert the randomStringSource to a slice of runes.
+	r := []rune(randomStringSource)
+
+	// Generate a random prime number using the length of the rune slice.
 	for i := range slice {
-		prime_num, _ := rand.Prime(rand.Reader, len(r))
-		unint := prime_num.Uint64()// converts the Prime numbers to Uint64
-		len := uint64(len(r)) //length of r is set to 
-		slice[i] = r[unint%len] 
+		primeNum, _ := rand.Prime(rand.Reader, len(r))
+		unint := primeNum.Uint64()
+		len := uint64(len(r))
+		slice[i] = r[unint%len]
 	}
 
 	return string(slice)
-
 }
+
