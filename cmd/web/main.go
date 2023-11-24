@@ -24,7 +24,7 @@ func main() {
 	var appConfig AppConfig
 
 	// Setting up server configurations
-	appConfig.ServerPort = 8080
+	appConfig.ServerPort = 4000
 	appConfig.Environment = "production"
 
 	// Creating a logger that writes to os.Stdout with date and time prefixes

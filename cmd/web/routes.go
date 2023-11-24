@@ -9,6 +9,6 @@ import (
 // Restful http router
 func (myApp *App) routes() *httprouter.Router {
 	router := httprouter.New()
-	router.HandlerFunc(http.MethodGet, "/v1/constructpassword/:seed", myApp.makeRandomPassword)
+	router.HandlerFunc(http.MethodGet, "/v1/randomstring/:seed", myApp.makeRandomPassword)
 	return router
 }
